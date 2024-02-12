@@ -12,6 +12,7 @@
       "Path": "Main.xaml",
       "SortBy": 0,
       "VariablesSectionElementsOrder": [
+        "directory_output&Flowchart_1",
         "strictSelector_newsTimer&Sequence_23",
         "strictSelector_strop&Sequence_20",
         "searchCount&Sequence_20",
