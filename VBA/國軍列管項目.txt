@@ -1,0 +1,84 @@
+Sub temp完成()
+
+Dim 列管原因 As String, 各類子目 As String, 備考 As String, 類別 As String
+Dim lastRow As Integer, row As Integer, col As Integer, 備考字數 As Integer
+
+列管原因 = ""
+備考 = ""
+
+With Sheets("列管temp")
+lastRow = .Cells(Rows.Count, 1).End(xlUp).row
+
+For row = 2 To lastRow
+    For col = 6 To 12
+        類別 = .Cells(1, col).Value
+        各類子目 = .Cells(row, col).Value
+
+        If 列管原因 = "" Then
+            If 各類子目 = "" Then
+                列管原因 = ""
+            Else
+                列管原因 = 各類子目
+                備考 = 類別
+            End If
+        Else
+            If 各類子目 = "" Then
+                列管原因 = 列管原因
+            Else
+                列管原因 = 列管原因 & vbNewLine & 各類子目
+                備考 = 備考 & "、" & 類別
+            End If
+        End If
+    Next col
+     
+     '原因填入
+    .Range("C" & row).Value = 列管原因
+    
+     '備考彙整和填入
+    備考字數 = Len(Replace(備考, "、", ""))
+    If 備考字數 > 1 Then
+        .Range("D" & row).Value = 備考 & "共" & 備考字數 & "類"
+    Else
+        .Range("D" & row).Value = 備考
+    End If
+    
+    列管原因 = ""
+    備考 = ""
+Next row
+
+.Columns("C:D").AutoFit
+
+End With
+End Sub
+
+
+Sub 篩出有列管()
+
+Dim lastRow As Integer
+With Sheets("列管temp")
+    .Range("A1:D1").AutoFilter field:=3, Criteria1:="<>"    '篩出有列管
+    lastRow = .Cells(Rows.Count, 1).End(xlUp).row
+
+    .Range("A1:D" & lastRow).Copy Sheets("列管final").Range("A1")   '貼至另一sheet
+    .Range("A1:D1").AutoFilter field:=3         '回復無篩選
+End With
+
+Sheets("列管final").Columns("C:D").AutoFit
+
+End Sub
+
+Sub 清除產出()
+Dim lastRow As Integer
+
+With Sheets("列管temp")
+    lastRow = .Cells(Rows.Count, 1).End(xlUp).row
+    .Range("C2:D" & lastRow).Clear
+End With
+
+With Sheets("列管final")
+    lastRow = .Cells(Rows.Count, 1).End(xlUp).row
+    .Range("A2:D" & lastRow).Clear
+
+End With
+
+End Sub
